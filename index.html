@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShop - Tienda Virtual</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <a href="#" class="logo">
+            <i class='bx bxs-store-alt'></i>
+            <span>CyberShop</span>
+        </a>
+        <nav>
+            <ul class="barra-menu">
+                <li><a href="#" id="allProducts">Todos</a></li>
+                <li><a href="#" class="menuItem">Monitores</a></li>
+                <li><a href="#" class="menuItem">Laptops</a></li>
+                <li><a href="#" class="menuItem">Auriculares</a></li>   
+            </ul>
+        </nav>
+        <div class="contenedor-carrito">
+            <a href="#" class="carrito" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <i class="ri-shopping-cart-2-fill"></i>
+                <span class='valor' id="carritoNumero">0</span>
+            </a>
+            <div class="bx bx-menu" id="menu-icon"></div>
+        </div>
+    </header>
+
+    <main>
+        
+        <section>
+            <h1>Tienda Virtual</h1>
+        </section>
+        
+        <h2>Los Productos Más Vendidos</h2>
+
+        <section class="productos" id="catalogoProductos">
+        </section>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Carrito de Compra</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="modalCarrito">
+
+                        </div>
+                        <div id="precioTotal">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-warning" id="btnVaciarCarrito">Vaciar Carrito</button>
+                        <button type="button" class="btn btn-primary" id="btnPedido">Realizar Pedido</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script src="js/main.js"></script>
+</body> 
+</html>
