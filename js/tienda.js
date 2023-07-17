@@ -1,39 +1,4 @@
 
-let productos = [];
-let carrito = [];
-
-class Producto{
-    constructor(id, nombre, precio, categoria, img) {
-        this.id         = id;
-        this.nombre     = nombre;
-        this.precio     = precio;
-        this.categoria  = categoria;
-        this.img        = img;
-        this.cantidad   = 1;
-    }
-}
-
-const productosPush = () => {
-    productos.push( new Producto( 1, 'Laptop HP 15T-DK200', 1870, 'Laptops', 'laptops/laptop01.jpg') )
-    productos.push( new Producto( 2, 'Laptop HP Victus 16-D0523', 1450, 'Laptops', 'laptops/laptop02.jpg') )
-    productos.push( new Producto( 3, 'Laptop HP Victus 16-20524', 2870, 'Laptops', 'laptops/laptop03.jpg') )
-    productos.push( new Producto( 4, 'Laptop Lenovo Ideapad 3', 3560, 'Laptops', 'laptops/laptop04.jpg') )
-    productos.push( new Producto( 5, 'Laptop MSI Katana GF76', 4200, 'Laptops', 'laptops/laptop05.jpg') )
-    productos.push( new Producto( 6, 'Laptop Asus Strix G17', 2650, 'Laptops', 'laptops/laptop06.jpg') )
-    productos.push( new Producto( 7, 'Laptop Asus Tuf Dash F15', 3270, 'Laptops', 'laptops/laptop07.jpg') )
-    productos.push( new Producto( 8, 'Laptop HP 16-D0542 G9', 3450, 'Laptops', 'laptops/laptop08.jpg') )
-    productos.push( new Producto( 9, 'Monitor Samsung 24" Smart', 2380, 'Monitores', 'monitores/monitor01.jpg') )
-    productos.push( new Producto( 10, 'Monitor Samsung 27" Smart', 3250, 'Monitores', 'monitores/monitor02.jpg') )
-    productos.push( new Producto( 11, 'Monitor LG 27" 27UL500', 1990, 'Monitores', 'monitores/monitor03.jpg') )
-    productos.push( new Producto( 12, 'Monitor LG 27” 27MP400', 5640, 'Monitores', 'monitores/monitor04.jpg') )
-    productos.push( new Producto( 13, 'Auricular Gamer Halion S2', 186, 'Auriculares', 'auriculares/auricular01.jpg') )
-    productos.push( new Producto( 14, 'Auricular Xtech XTH541', 219, 'Auriculares', 'auriculares/auricular02.jpg') )
-    productos.push( new Producto( 15, 'Auricular Micronics Lúdico', 145, 'Auriculares', 'auriculares/auricular03.jpg') )
-    productos.push( new Producto( 16, 'Auricular Antryx CS Thunder', 106, 'Auriculares', 'auriculares/auricular04.jpg') )
-    productos.push( new Producto( 17, 'Auricular Logitech G335', 134, 'Auriculares', 'auriculares/auricular05.jpg') )
-    productos.push( new Producto( 18, 'Auricular Jabra Evolve2', 175, 'Auriculares', 'auriculares/auricular06.jpg') )
-}
-
 const catalogoProd  = document.querySelector('#catalogoProductos');
 const allProducts   = document.querySelector('#allProducts');
 const menuItems     = document.querySelectorAll('.menuItem');
@@ -43,6 +8,17 @@ const btnVaciarCarrito = document.querySelector('#btnVaciarCarrito');
 const btnPedido     = document.querySelector('#btnPedido');
 
 const options = { style: 'currency', currency: 'USD' };
+
+// Solicitud Async - Await - Fetch
+const solicitarProductos = async () => { 
+    const response  = await fetch(URL);
+    const dataJSON      = await response.json();
+    productos = dataJSON.map( producto => {
+        return new Producto(producto.id, producto.nombre, producto.precio, producto.categoria, producto.img);
+    })
+    renderizarProductos(productos);
+}
+solicitarProductos();
 
 // Agregando Evento para mostrar todos los Productos
 allProducts.addEventListener('click', () => {
@@ -64,9 +40,9 @@ const renderizarProductos = (productos) => {
     productos.forEach(({id, nombre, precio, categoria, img}) => {
         catalogoProd.innerHTML += `
         <article class="card-producto">
-            <img src="img/${img}" alt="${nombre}">
+            <img src="../img/${img}" alt="${nombre}">
             <div class="content-descripcion">
-                <span>${categoria}</span>
+                <span class="card-categoria">${categoria}</span>
                 <h3>${nombre}</h3>
                 <div class="content-precio">                        
                     <span>${precio.toLocaleString('en-US', options)}</span>
@@ -87,12 +63,22 @@ const agregarClickBoton = (selector) => {
             let id = parseInt(boton.id);
             if(selector === '.btn-addProducto'){
                 agregarAlCarrito(id);
+                alertaAgregar();
             }
             else if(selector === '.btn-deleteProducto'){
-                eliminarProducto(id);
+                alertaConfirmarEliminar(id);
             }
         });
     });
+}
+
+const alertaAgregar = () => {
+    Swal.fire({
+        icon: 'success',
+        title: 'Producto Agregado...',
+        text: 'Se añadió al Carrito',
+        confirmButtonText: 'Entendido!',
+    })
 }
 
 // Agregando un producto al Carrito
@@ -114,6 +100,22 @@ const agregarAlCarrito = (id) => {
     listarCarrito();
 }
 
+const alertaConfirmarEliminar = (id) => {
+    Swal.fire({
+        title: '¿Estás Seguro de Eliminar este Producto?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar!',
+        cancelButtonText: 'No, cancelar!',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            eliminarProducto(id);
+        }
+    })
+}
+
 // Eliminando un producto del Carrito
 const eliminarProducto = (id) => {
     let indice = carrito.findIndex( prod => prod.id === id);
@@ -123,13 +125,38 @@ const eliminarProducto = (id) => {
     localStorage.setItem('carritoProductos', JSON.stringify(carrito));
 }
 
-// Vaciando el Carrito
+// Alerta de Vaciar Carrito
 btnVaciarCarrito.addEventListener('click', () => {
+    if(carrito.length !== 0){
+        Swal.fire({
+            title: '¿Está Seguro de Vaciar su Carrito?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, vaciar!',
+            cancelButtonText: 'No, cancelar!',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                vaciarCarrito();
+            }
+        })
+    }else{
+        Swal.fire({
+            icon: 'warning',
+            title: 'Su Carrito ya está Vacío',
+            confirmButtonText: 'Entendido!',
+        })
+    }
+})
+
+// Vaciando el Carrito
+const vaciarCarrito = () => {
     carrito.splice(0, carrito.length);
     listarCarrito();
     actualizarNumeroCarrito();
     localStorage.clear();
-})
+}
 
 // Listando en el Modal los productos que están en el Carrito
 const listarCarrito = () => {
@@ -141,7 +168,7 @@ const listarCarrito = () => {
 
             modalCarrito.innerHTML += `
                 <section class="carrito-producto">
-                    <img class="carrito-producto__img" src="img/${img}"/>
+                    <img class="carrito-producto__img" src="../img/${img}"/>
                     <div class="carrito-producto__detalle">
                         <h3 class="nombre">${nombre}</h3>
                         <div class="carrito__precios">
@@ -189,7 +216,6 @@ const calcularPrecioTotal = () => {
 
 // Añadiendo evento de carga de página
 document.addEventListener("DOMContentLoaded", () => {
-    renderizarProductos(productos);
     carrito = JSON.parse(localStorage.getItem("carritoProductos")) || [];
     listarCarrito();
     actualizarNumeroCarrito();
@@ -198,10 +224,12 @@ document.addEventListener("DOMContentLoaded", () => {
 // Realizando Pedido
 btnPedido.addEventListener('click', () => {
     if(carrito.length !== 0){
-        localStorage.clear();
-        location.href = 'pages/pedido.html';
+        location.href = 'checkout.html';
+    }else{
+        Swal.fire({
+            icon: 'warning',
+            title: 'No hay Productos en el Carrito',
+            confirmButtonText: 'Entendido!',
+        })
     }
 })
-
-// Instanciando Productos y agregando al Array Productos
-productosPush();
